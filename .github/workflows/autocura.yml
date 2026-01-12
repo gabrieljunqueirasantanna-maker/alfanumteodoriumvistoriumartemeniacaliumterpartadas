@@ -1,0 +1,26 @@
+name: Manter TTS Vivo e Autocura
+on:
+  schedule:
+    - cron: '*/12 * * * *' # Roda a cada 12 minutos
+  workflow_dispatch: # Permite rodar manualmente pelo site do GitHub
+
+jobs:
+  check-and-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Testar API e Reiniciar se necessário
+        run: |
+          URL="https://alfanumteodoriumvistoriumartemeniacalium-m6sz.onrender.com/speak?API_KEY=suprassumodottsmaravilhoso&text=ping"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+          
+          echo "Status da API: $STATUS"
+          
+          if [ "$STATUS" != "200" ]; then
+            echo "Erro detectado! Enviando comando de Clear Cache & Deploy..."
+            curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
+                 -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+                 -H "Content-Type: application/json" \
+                 -d '{"clearCache": "clear"}'
+          else
+            echo "API está funcionando perfeitamente."
+          fi
