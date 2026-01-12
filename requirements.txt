@@ -1,1 +1,3 @@
-fastapi\nuvicorn\nedge-tts
+fastapi
+uvicorn
+edge-tts
