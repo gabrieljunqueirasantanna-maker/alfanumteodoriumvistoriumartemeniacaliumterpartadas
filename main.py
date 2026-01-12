@@ -1,24 +1,16 @@
-from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import FileResponse
-import edge_tts
-import os
-
-app = FastAPI()
-SECRET_KEY = os.getenv("API_KEY")
-
 @app.get("/speak")
 async def speak(
     text: str, 
+    API_KEY: str = Query(None), 
     api_key: str = Query(None), 
     voice: str = "pt-BR-FranciscaNeural",
     rate: str = "+0%",
     pitch: str = "+0Hz"
 ):
-    if api_key != SECRET_KEY:
+    # Tenta pegar a chave de qualquer um dos dois parâmetros
+    token_recebido = API_KEY or api_key
+    
+    if token_recebido != SECRET_KEY:
         raise HTTPException(status_code=403, detail="Chave API invalida")
-        
-    output = "audio.mp3"
-    # Agora passamos voice, rate e pitch para o motor do Edge
-    communicate = edge_tts.Communicate(text, voice, rate=rate, pitch=pitch)
-    await communicate.save(output)
-    return FileResponse(output, media_type="audio/mpeg")
+    
+    # ... resto do código igual ...
